@@ -28,7 +28,7 @@ func Start(
 
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:          "> ",
-		HistoryFile:     "/tmp/fortress-history",
+		HistoryFile:     "/tmp/cli-auth-history",
 		AutoComplete:    completer,
 		InterruptPrompt: "^C",
 		EOFPrompt:       "exit",
@@ -49,6 +49,11 @@ func Start(
 
 		cmd := strings.TrimSpace(line)
 
+		if state.LoggedIn &&
+			!IsSessionValid(state) {
+			continue
+		}
+
 		switch cmd {
 
 		case "help":
@@ -60,6 +65,18 @@ func Start(
 		case "exit":
 			fmt.Println("Goodbye.")
 			return nil
+
+		case "login":
+			handleLogin(
+				repo,
+				state,
+			)
+
+		case "whoami":
+			handleWhoAmI(
+				repo,
+				state,
+			)
 
 		default:
 			fmt.Println("Unknown command. Type 'help'.")

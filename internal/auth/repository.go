@@ -84,6 +84,49 @@ func (r *Repository) GetUserByUsername(
 	return user, nil
 }
 
+func (r *Repository) GetUserByID(
+	id int64,
+) (*models.User, error) {
+
+	query := `
+	SELECT
+		id,
+		username,
+		password_hash,
+		mfa_enabled,
+		totp_secret,
+		failed_attempts,
+		locked_until,
+		created_at,
+		last_login
+	FROM users
+	WHERE id = ?
+	`
+
+	user := &models.User{}
+
+	err := r.DB.QueryRow(
+		query,
+		id,
+	).Scan(
+		&user.ID,
+		&user.Username,
+		&user.PasswordHash,
+		&user.MFAEnabled,
+		&user.TOTPSecret,
+		&user.FailedAttempts,
+		&user.LockedUntil,
+		&user.CreatedAt,
+		&user.LastLogin,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (r *Repository) UpdateLastLogin(
 	userID int64,
 ) error {

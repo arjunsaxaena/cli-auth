@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"cli-auth/internal/models"
 	"errors"
 	"fmt"
 	"time"
@@ -15,17 +16,17 @@ func Login(
 	repo *Repository,
 	username string,
 	password string,
-) error {
+) (*models.User, error) {
 
 	user, err := repo.GetUserByUsername(username)
 	if err != nil {
-		return errors.New("invalid username or password")
+		return nil, errors.New("invalid username or password")
 	}
 
 	if user.LockedUntil != nil &&
 		time.Now().Before(*user.LockedUntil) {
 
-		return fmt.Errorf(
+		return nil, fmt.Errorf(
 			"account locked until %s",
 			user.LockedUntil.Format(time.RFC1123),
 		)
@@ -52,13 +53,13 @@ func Login(
 				lockUntil,
 			)
 
-			return fmt.Errorf(
+			return nil, fmt.Errorf(
 				"account locked for %d minutes",
 				int(LockDuration.Minutes()),
 			)
 		}
 
-		return fmt.Errorf(
+		return nil, fmt.Errorf(
 			"invalid username or password (%d/%d attempts)",
 			newAttempts,
 			MaxFailedAttempts,
@@ -69,5 +70,5 @@ func Login(
 
 	_ = repo.UpdateLastLogin(user.ID)
 
-	return nil
+	return user, nil
 }
