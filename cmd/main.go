@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
+	"cli-auth/internal/auth"
+	"cli-auth/internal/cli"
 	"cli-auth/internal/database"
+	"log"
 )
 
 func main() {
+
 	db, err := database.New()
 	if err != nil {
 		log.Fatal(err)
@@ -20,5 +21,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Database initialized successfully.")
+	repo := auth.NewRepository(db)
+
+	err = cli.Start(repo)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
