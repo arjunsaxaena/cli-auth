@@ -1,15 +1,11 @@
 package auth
 
 import (
+	"cli-auth/internal/config"
 	"cli-auth/internal/models"
 	"errors"
 	"fmt"
 	"time"
-)
-
-const (
-	MaxFailedAttempts = 5
-	LockDuration      = 15 * time.Minute
 )
 
 func Login(
@@ -43,10 +39,10 @@ func Login(
 
 		_ = repo.IncrementFailedAttempts(user.ID)
 
-		if newAttempts >= MaxFailedAttempts {
+		if newAttempts >= config.App.MaxFailedAttempt {
 
 			lockUntil := time.Now().
-				Add(LockDuration)
+				Add(config.App.LockDuration)
 
 			_ = repo.LockAccount(
 				user.ID,
@@ -55,14 +51,14 @@ func Login(
 
 			return nil, fmt.Errorf(
 				"account locked for %d minutes",
-				int(LockDuration.Minutes()),
+				int(config.App.LockDuration.Minutes()),
 			)
 		}
 
 		return nil, fmt.Errorf(
 			"invalid username or password (%d/%d attempts)",
 			newAttempts,
-			MaxFailedAttempts,
+			config.App.MaxFailedAttempt,
 		)
 	}
 

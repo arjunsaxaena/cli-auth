@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"cli-auth/internal/auth"
+	"cli-auth/internal/config"
 	"fmt"
 	"os"
 	"strings"
@@ -32,7 +33,7 @@ func handleLogin(
 		return
 	}
 
-	user, err := auth.Login(
+	user, err := auth.AuthenticatePassword(
 		repo,
 		username,
 		password,
@@ -43,14 +44,58 @@ func handleLogin(
 		return
 	}
 
+	if user.MFAEnabled {
+
+		if user.TOTPSecret == nil {
+			fmt.Println("User has MFA enabled but no secret configured.")
+			return
+		}
+
+		code := ReadTOTP()
+
+		if !auth.ValidateTOTP(
+			code,
+			*user.TOTPSecret,
+		) {
+			fmt.Println("Invalid TOTP code.")
+			return
+		}
+	}
+
+	err = auth.CompleteLogin(
+		repo,
+		user.ID,
+	)
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	user, err = repo.GetUserByID(
+		user.ID,
+	)
+
+	if err != nil {
+		fmt.Println(
+			"Error loading updated user:",
+			err,
+		)
+		return
+	}
+
 	state.LoggedIn = true
 	state.UserID = user.ID
 	state.Username = user.Username
-	state.SessionExpiresAt = time.Now().Add(auth.SessionDuration)
+	state.SessionExpiresAt = time.Now().
+		Add(config.App.SessionDuration)
 
 	fmt.Println()
 	fmt.Println("Login successful.")
 	fmt.Println()
 
-	showUserDetails(user, state)
+	showUserDetails(
+		user,
+		state,
+	)
 }
