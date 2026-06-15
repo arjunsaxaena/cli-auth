@@ -83,3 +83,72 @@ func (r *Repository) GetUserByUsername(
 
 	return user, nil
 }
+
+func (r *Repository) UpdateLastLogin(
+	userID int64,
+) error {
+
+	query := `
+	UPDATE users
+	SET last_login = CURRENT_TIMESTAMP
+	WHERE id = ?
+	`
+
+	_, err := r.DB.Exec(query, userID)
+
+	return err
+}
+
+func (r *Repository) ResetFailedAttempts(
+	userID int64,
+) error {
+
+	query := `
+	UPDATE users
+	SET failed_attempts = 0,
+	    locked_until = NULL
+	WHERE id = ?
+	`
+
+	_, err := r.DB.Exec(query, userID)
+
+	return err
+}
+
+func (r *Repository) IncrementFailedAttempts(
+	userID int64,
+) error {
+
+	query := `
+	UPDATE users
+	SET failed_attempts = failed_attempts + 1
+	WHERE id = ?
+	`
+
+	_, err := r.DB.Exec(
+		query,
+		userID,
+	)
+
+	return err
+}
+
+func (r *Repository) LockAccount(
+	userID int64,
+	until time.Time,
+) error {
+
+	query := `
+	UPDATE users
+	SET locked_until = ?
+	WHERE id = ?
+	`
+
+	_, err := r.DB.Exec(
+		query,
+		until,
+		userID,
+	)
+
+	return err
+}

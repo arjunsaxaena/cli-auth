@@ -20,12 +20,13 @@ func handleRegister(
 	username, _ := reader.ReadString('\n')
 	username = strings.TrimSpace(username)
 
-	fmt.Print("Password: ")
+	password, err := ReadPassword("Password: ")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
-	password, _ := reader.ReadString('\n')
-	password = strings.TrimSpace(password)
-
-	err := auth.Register(
+	err = auth.Register(
 		repo,
 		username,
 		password,
