@@ -7,7 +7,7 @@ type User struct {
 	Username       string
 	PasswordHash   string
 	MFAEnabled     bool
-	TOTPSecret     string
+	TOTPSecret     *string
 	FailedAttempts int
 	LockedUntil    *time.Time
 	CreatedAt      time.Time

@@ -195,3 +195,45 @@ func (r *Repository) LockAccount(
 
 	return err
 }
+
+func (r *Repository) EnableMFA(
+	userID int64,
+	secret string,
+) error {
+
+	query := `
+	UPDATE users
+	SET
+		mfa_enabled = 1,
+		totp_secret = ?
+	WHERE id = ?
+	`
+
+	_, err := r.DB.Exec(
+		query,
+		secret,
+		userID,
+	)
+
+	return err
+}
+
+func (r *Repository) DisableMFA(
+	userID int64,
+) error {
+
+	query := `
+	UPDATE users
+	SET
+		mfa_enabled = 0,
+		totp_secret = NULL
+	WHERE id = ?
+	`
+
+	_, err := r.DB.Exec(
+		query,
+		userID,
+	)
+
+	return err
+}

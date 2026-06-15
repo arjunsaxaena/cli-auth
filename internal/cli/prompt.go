@@ -78,6 +78,21 @@ func Start(
 				state,
 			)
 
+		case "enable-2fa":
+			handleEnable2FA(
+				repo,
+				state,
+			)
+
+		case "disable-2fa":
+			handleDisable2FA(
+				repo,
+				state,
+			)
+
+		case "logout":
+			handleLogout(state)
+
 		default:
 			fmt.Println("Unknown command. Type 'help'.")
 		}
