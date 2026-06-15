@@ -37,6 +37,8 @@ func handleEnable2FA(
 		return
 	}
 
+	choice := ReadSetupMethod()
+
 	err = repo.EnableMFA(
 		user.ID,
 		key.Secret(),
@@ -47,24 +49,48 @@ func handleEnable2FA(
 		return
 	}
 
-	path, err := auth.GenerateQRCode(
-		user.Username,
-		key.URL(),
-	)
+	switch choice {
 
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
+	case "1":
+
+		path, err := auth.GenerateQRCode(
+			user.Username,
+			key.URL(),
+		)
+
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		fmt.Println()
+		fmt.Println(
+			"2FA enabled successfully.",
+		)
+
+		fmt.Printf(
+			"\nQR Code saved to: %s\n",
+			path,
+		)
+
+		fmt.Println(
+			"Scan it with Google Authenticator.",
+		)
+
+	case "2":
+
+		fmt.Println()
+		fmt.Println(
+			"2FA enabled successfully.",
+		)
+
+		fmt.Println(
+			"\nAdd this secret to your authenticator app:",
+		)
+
+		fmt.Println()
+		fmt.Println(
+			key.Secret(),
+		)
 	}
-
-	fmt.Println()
-	fmt.Println("2FA enabled successfully.")
-	fmt.Println()
-	fmt.Printf(
-		"QR Code saved to: %s\n",
-		path,
-	)
-	fmt.Println(
-		"Scan it with Google Authenticator.",
-	)
 }
