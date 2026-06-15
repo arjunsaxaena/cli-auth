@@ -14,14 +14,57 @@ func handleDisable2FA(
 		return
 	}
 
-	err := repo.DisableMFA(
+	user, err := repo.GetUserByID(
 		state.UserID,
 	)
 
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Unable to load user.")
 		return
 	}
 
-	fmt.Println("2FA disabled.")
+	if !user.MFAEnabled {
+		fmt.Println(
+			"2FA is already disabled.",
+		)
+		return
+	}
+
+	if user.TOTPSecret == nil {
+		fmt.Println(
+			"Missing TOTP secret.",
+		)
+		return
+	}
+
+	code := ReadTOTP()
+
+	if !auth.ValidateTOTP(
+		code,
+		*user.TOTPSecret,
+	) {
+
+		fmt.Println(
+			"Invalid TOTP code.",
+		)
+
+		return
+	}
+
+	err = repo.DisableMFA(
+		user.ID,
+	)
+
+	if err != nil {
+		fmt.Println(
+			"Error:",
+			err,
+		)
+
+		return
+	}
+
+	fmt.Println(
+		"2FA disabled successfully.",
+	)
 }

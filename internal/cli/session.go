@@ -17,9 +17,11 @@ func IsSessionValid(
 		state.SessionExpiresAt,
 	) {
 
+		fmt.Println()
 		fmt.Println(
-			"Session expired. Please login again.",
+			"Session expired. You have been logged out.",
 		)
+		fmt.Println()
 
 		state.LoggedIn = false
 		state.UserID = 0

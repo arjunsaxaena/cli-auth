@@ -1,8 +1,9 @@
 package cli
 
 import (
-	"cli-auth/internal/models"
 	"fmt"
+
+	"cli-auth/internal/models"
 )
 
 func showUserDetails(
@@ -10,24 +11,33 @@ func showUserDetails(
 	state *State,
 ) {
 
+	fmt.Println("User Details")
+	fmt.Println("------------")
+
 	fmt.Printf(
-		"Username: %s\n",
+		"Username          : %s\n",
 		user.Username,
 	)
 
 	fmt.Printf(
-		"Registered: %s\n",
-		user.CreatedAt.Format("2006-01-02 15:04:05"),
+		"Registered        : %s\n",
+		user.CreatedAt.Format(
+			"2006-01-02 15:04:05",
+		),
 	)
 
 	if user.MFAEnabled {
-		fmt.Println("MFA: Enabled")
+		fmt.Println(
+			"MFA Status        : Enabled",
+		)
 	} else {
-		fmt.Println("MFA: Disabled")
+		fmt.Println(
+			"MFA Status        : Disabled",
+		)
 	}
 
 	fmt.Printf(
-		"Session Expires: %s\n",
+		"Session Expires   : %s\n",
 		state.SessionExpiresAt.Format(
 			"2006-01-02 15:04:05",
 		),
@@ -36,7 +46,7 @@ func showUserDetails(
 	if user.LastLogin != nil {
 
 		fmt.Printf(
-			"Last Login: %s\n",
+			"Last Login        : %s\n",
 			user.LastLogin.Format(
 				"2006-01-02 15:04:05",
 			),
@@ -44,6 +54,10 @@ func showUserDetails(
 
 	} else {
 
-		fmt.Println("Last Login: Never")
+		fmt.Println(
+			"Last Login        : Never",
+		)
 	}
+
+	fmt.Println()
 }
