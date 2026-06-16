@@ -1,0 +1,10 @@
+.git
+.gitignore
+
+data
+qr-codes
+
+README.md
+
+*.db
+*.log

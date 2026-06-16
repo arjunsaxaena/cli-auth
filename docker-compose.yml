@@ -1,0 +1,17 @@
+services:
+  cli-auth:
+    build: .
+
+    container_name: cli-auth
+
+    stdin_open: true
+    tty: true
+
+    environment:
+      SESSION_TIMEOUT_MINUTES: 30
+      LOCK_DURATION_MINUTES: 15
+      MAX_FAILED_ATTEMPTS: 5
+
+    volumes:
+      - ./data:/app/data
+      - ./qr-codes:/app/qr-codes
