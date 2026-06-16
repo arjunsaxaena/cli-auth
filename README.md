@@ -112,3 +112,25 @@ After a successful login, the CLI displays your user details, changes color to g
 1. **Password Protection**: Passwords are never stored in plaintext. They are hashed using `bcrypt` and verified using secure constant-time comparisons.
 2. **Account Lockouts**: If a user exceeds `MAX_FAILED_ATTEMPTS` failed logins, their database record is marked with a timestamp in `locked_until`. Any subsequent login attempts during this duration are rejected immediately with the lockout message.
 3. **Session Expiry**: Sessions expire automatically after `SESSION_TIMEOUT_MINUTES`. If you run any command after this duration has passed, the CLI informs you that your session has expired, cleans the login state, and returns you to the guest state.
+
+---
+
+## 📸 Visual Walkthrough
+
+### 1. Help Commands
+![Help Command](images/help.png)
+
+### 2. User Registration
+![User Registration](images/register.png)
+
+### 3. User Login
+![User Login](images/login.png)
+
+### 4. Enable 2FA
+![Enable 2FA](images/enable-2fa.png)
+
+### 5. Login with 2FA
+![Login with 2FA](images/login-w-2fa.png)
+
+### 6. Disable 2FA
+![Disable 2FA](images/disable-2fa.png)
