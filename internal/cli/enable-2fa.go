@@ -63,6 +63,14 @@ func handleEnable2FA(
 			return
 		}
 
+		qrString, err := auth.GenerateTerminalQRCode(key.URL())
+		if err == nil {
+			fmt.Println()
+			fmt.Println("Scan this QR Code with your authenticator app:")
+			fmt.Println()
+			fmt.Println(qrString)
+		}
+
 		fmt.Println()
 		fmt.Println(
 			"2FA enabled successfully.",

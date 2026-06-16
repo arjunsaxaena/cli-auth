@@ -25,16 +25,20 @@ func AuthenticatePassword(
 			)
 	}
 
-	if user.LockedUntil != nil &&
-		time.Now().Before(*user.LockedUntil) {
-
-		return nil,
-			fmt.Errorf(
-				"account locked until %s",
-				user.LockedUntil.Format(
-					time.RFC1123,
-				),
-			)
+	if user.LockedUntil != nil {
+		if time.Now().Before(*user.LockedUntil) {
+			return nil,
+				fmt.Errorf(
+					"account locked until %s",
+					user.LockedUntil.Format(
+						time.RFC1123,
+					),
+				)
+		} else {
+			_ = repo.ResetFailedAttempts(user.ID)
+			user.FailedAttempts = 0
+			user.LockedUntil = nil
+		}
 	}
 
 	err = VerifyPassword(

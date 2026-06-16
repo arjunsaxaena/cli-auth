@@ -40,3 +40,19 @@ func GenerateQRCode(
 
 	return filePath, nil
 }
+
+func GenerateTerminalQRCode(
+	otpURL string,
+) (string, error) {
+
+	q, err := qrcode.New(
+		otpURL,
+		qrcode.Medium,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	return q.ToSmallString(false), nil
+}
